@@ -1,8 +1,8 @@
 #### User management on M365  
 
-##You must install the Azure Active Directory Module and EXO V2 Module. See below:
 Install-Module -Name AzureAD
-#Install-Module -Name ExchangeOnlineManagement
+Install-Module -Name MSOnline
+Install-Module -Name ExchangeOnlineManagement
 
 Set-ExecutionPolicy RemoteSigned
 
@@ -24,7 +24,7 @@ $DisplayName = Read-Host "Enter Display Name"
 $FirstName = Read-Host "Enter First Name"
 $SurName = Read-Host "Enter Surname"
 $UPN = Read-Host "Enter user UPN (eg j.smith@contoso.onmicrosoft.com)"
-$MailAlias = Read-Host "Mail Alias (Appears before the '@' symbol"
+$MailAlias = Read-Host "Mail Alias (Appears before the '@' symbol)"
 
 $PasswordProfile=New-Object -TypeName Microsoft.Open.AzureAD.Model.PasswordProfile
 $PasswordProfile.Password= Read-Host "Enter a Password"
@@ -107,21 +107,52 @@ Set-AzureADUserLicense -ObjectId $UPN -AssignedLicenses $LicenseToAssign
 
 #endregion
 
-#region Main Menu
-function Show-Menu {
+#region User Mangement Menu
+function Show-UsrMgmtMenu {
 Do{
         Clear-Host
         Write-Host "
-        ========Main========
+        ========User Management========
         "
-        Write-Host "**You must select option 1 on launch**" -ForegroundColor Yellow
         Write-Host "
-        Switch Customer : 1
-        Create User     : 2
-        Change password : 3
-        Set access      : 4
-        Add license     : 5
-        Quit            : Q
+        View user details : 1
+        Create new user   : 2
+        Delete user       : 3
+        Change password   : 4
+        Set access        : 5
+        Add license       : 6
+        Quit              : Q
+        "
+        $Opt = Read-Host
+            Switch ($Opt)
+            {
+
+                1{Connect-Customer}
+                2{New-User}
+                3{Delete-User}
+                4{Set-Passowrd}
+                5{Set-Access}
+                6{Add-License}
+                
+            }
+    }Until ($Opt -eq "q")
+}
+#endregion
+
+#region User Reporting Menu
+function Show-UsrReportMenu {
+Do{
+        Clear-Host
+        Write-Host "
+        ========User Reporting========
+        "
+        Write-Host "
+        All users               : 1
+        Enabled users           : 2
+        Disabled users          : 3
+        Recently created users  : 4
+        Recently deleted users  : 5
+        Quit                    : Q
         "
         $Opt = Read-Host
             Switch ($Opt)
@@ -138,4 +169,101 @@ Do{
 }
 #endregion
 
-Show-Menu
+
+#region EXO Management Menu
+function Show-EXOMgmtMenu {
+Do{
+        Clear-Host
+        Write-Host "
+        ========EXO Management========
+        "
+        Write-Host "
+        Set auto-reply               : 1
+        Set delegate permissions     : 2
+        Remove delegate permissions  : 3
+        Set forwarding               : 4
+        Remove forward               : 5
+        Quit                         : Q
+        "
+        $Opt = Read-Host
+            Switch ($Opt)
+            {
+
+                1{Connect-Customer}
+                2{New-User}
+                3{Set-Passowrd}
+                4{Set-Access}
+                5{Add-License}
+                
+            }
+    }Until ($Opt -eq "q")
+}
+#endregion
+
+
+
+#region EXO Reporting Menu
+function Show-EXOReportMenu {
+Do{
+        Clear-Host
+        Write-Host "
+        ========EXO Reporting========
+        "
+        Write-Host "
+        All mailboxes                       : 1
+        Recently created                    : 2
+        Recently deleted                    : 3
+        User mailbox delegate permissions   : 4
+        Shared mailbox delegate permissions : 5
+        Quit                                : Q
+        "
+        $Opt = Read-Host
+            Switch ($Opt)
+            {
+
+                1{Connect-Customer}
+                2{New-User}
+                3{Set-Passowrd}
+                4{Set-Access}
+                5{Add-License}
+                
+            }
+    }Until ($Opt -eq "q")
+}
+#endregion
+
+
+#region Main Menu
+function Show-HomeMenu {
+Do{
+        Clear-Host
+        Write-Host "
+        ========Main========
+        "
+        Write-Host "**You must select option 1 on launch**" -ForegroundColor Yellow
+        Write-Host "
+        Switch Customer     : 1
+        List tenant details : 2
+        User Management     : 3
+        User Reporting      : 4
+        EXO Management      : 5
+        EXO Reporting       : 6
+        Quit                : Q
+        "
+        $Opt = Read-Host
+            Switch ($Opt)
+            {
+
+                1{Connect-Customer}
+                2{Get-TenantInfo}
+                3{Show-UsrMgmtMenu}
+                4{Show-UsrReportMenu}
+                5{Show-EXOMgmtMenu}
+                6{Show-EXOReportMenu}
+                
+            }
+    }Until ($Opt -eq "q")
+}
+#endregion
+
+Show-HomeMenu
