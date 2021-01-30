@@ -141,6 +141,41 @@ Do{
 }
 #endregion
 
+#region User Reporting Functions
+
+#region All users
+function Get-AllUserReport {
+    Get-AzureADUser -All True | Export-Csv C:\Temp\allusers.csv -NoTypeInformation 
+}
+#endregion
+
+#region Enabled users
+function Get-EnabledUserReport {
+    Get-AzureADUser -Filter "AccountEnabled eq true" | Export-Csv C:\Temp\enabledusers.csv -NoTypeInformation 
+}
+#endregion
+
+#region Disabled users
+function Get-DisabledUserReport {
+    Get-AzureADUser -Filter "AccountEnabled eq false" | Export-Csv C:\Temp\disabledusers.csv -NoTypeInformation 
+}
+#endregion
+
+#region Recently created users
+function Get-RecentUserCreated {
+    Write-Host "In prog"
+}
+#endregion
+
+#region Revently deleted users
+function Get-RecentUserDeleted {
+    Write-Host "In prog"
+} 
+#endregion
+
+
+#endregion
+
 #region User Reporting Menu
 function Show-UsrReportMenu {
 Do{
@@ -160,11 +195,11 @@ Do{
             Switch ($Opt)
             {
 
-                1{Connect-Customer}
-                2{New-User}
-                3{Set-Passowrd}
-                4{Set-Access}
-                5{Add-License}
+                1{Get-AllUserReport}
+                2{Get-EnabledUserReport}
+                3{Get-DisabledUserReport}
+                4{Get-RecentUserCreated}
+                5{Get-RecentUserDeleted}
                 
             }
     }Until ($Opt -eq "q")
