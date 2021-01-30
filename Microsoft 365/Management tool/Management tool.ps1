@@ -1,19 +1,21 @@
-#### User management on M365  
+#### M365 Management Script  
+
+Set-ExecutionPolicy RemoteSigned
 
 Install-Module -Name AzureAD
 Install-Module -Name MSOnline
 Install-Module -Name ExchangeOnlineManagement
 
-Set-ExecutionPolicy RemoteSigned
+Import-Module AzureAD
+Import-Module ExchangeOnlineManagement
 
-#region Change Customer
-function Connect-Customer {
-$credential = Get-Credential
-#Import-Module ExchangeOnlineManagement
 
-Connect-AzureAD -Credential $credential
-#Connect-ExchangeOnline -Credential $credential -ShowProgress $true
+#region User Management Functions
 
+#region View user details
+function Get-User {
+    $UPN = Read-Host "Enter user UPN (eg j.smith@contoso.onmicrosoft.com)"
+    Get-AzureADUser -ObjectId $UPN | Out-GridView
 }
 #endregion
 
@@ -89,7 +91,7 @@ $UPN = Read-Host "Enter user UPN (eg j.smith@contoso.onmicrosoft.com)"
 #region Add a license
 
 function Add-License {
-$LicensePicker = Get-AzureADSubscribedSku | Select SkuPartNumber | Out-GridView -Title "Select the License you wish to apply" -OutputMode Single 
+$LicensePicker = Get-AzureADSubscribedSku | Select-Object SkuPartNumber | Out-GridView -Title "Select the License you wish to apply" -OutputMode Single 
 $LicenseSelect = $LicensePicker.SkuPartNumber
     Write-Host "You selected:"$LicenseSelect
 
@@ -107,6 +109,8 @@ Set-AzureADUserLicense -ObjectId $UPN -AssignedLicenses $LicenseToAssign
 
 #endregion
 
+#endregion
+
 #region User Mangement Menu
 function Show-UsrMgmtMenu {
 Do{
@@ -117,22 +121,20 @@ Do{
         Write-Host "
         View user details : 1
         Create new user   : 2
-        Delete user       : 3
-        Change password   : 4
-        Set access        : 5
-        Add license       : 6
+        Change password   : 3
+        Set access        : 4
+        Add license       : 5
         Quit              : Q
         "
         $Opt = Read-Host
             Switch ($Opt)
             {
 
-                1{Connect-Customer}
+                1{Get-User}
                 2{New-User}
-                3{Delete-User}
-                4{Set-Passowrd}
-                5{Set-Access}
-                6{Add-License}
+                3{Set-Passowrd}
+                4{Set-Access}
+                5{Add-License}
                 
             }
     }Until ($Opt -eq "q")
@@ -200,8 +202,6 @@ Do{
 }
 #endregion
 
-
-
 #region EXO Reporting Menu
 function Show-EXOReportMenu {
 Do{
@@ -232,6 +232,21 @@ Do{
 }
 #endregion
 
+#region Change Customer
+function Connect-Customer {
+    $credential = Get-Credential
+    
+    Connect-AzureAD -Credential $credential
+    Connect-ExchangeOnline -Credential $credential -ShowProgress $true
+    Connect-MsolService -Credential $credential
+}
+#endregion
+
+#region Tenant info
+function Get-TenantInfo{
+    Get-MsolCompanyInformation | Out-GridView
+}
+#endregion
 
 #region Main Menu
 function Show-HomeMenu {
