@@ -167,7 +167,7 @@ function Get-RecentUserCreated {
 }
 #endregion
 
-#region Revently deleted users
+#region Recently deleted users
 function Get-RecentUserDeleted {
     Write-Host "In prog"
 } 
